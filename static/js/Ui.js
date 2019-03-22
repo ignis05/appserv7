@@ -25,8 +25,8 @@ class UI {
                 .append(reset)
             nickname.focus()
             login.on("click", async () => {
-                console.log("click");
                 let username = $("#nickname").val()
+                if(username == "") return
                 let response = await this.net.login(username)
                 switch (response.msg) {
                     case "OK":
