@@ -3,6 +3,9 @@ var ui;
 var session;
 $(document).ready(async () => {
     console.log("ready");
+    $("#status").on("click", () => {
+        window.open(window.location.href);
+    })
 
     ui = new UI(document.getElementById("status"), net, session)
     ui.displayGame()

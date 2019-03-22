@@ -18,7 +18,8 @@ input:focus {
     position: fixed;
     width: 100%;
     height: 100px;
-    background: #00ff00aa
+    background: #00ff00aa;
+    cursor: pointer;
 }
 
 #overlay {
