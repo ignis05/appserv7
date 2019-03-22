@@ -90,8 +90,9 @@ function login(req, res) {
         console.log(username)
         if (serverDatabase.clients.length < 2) {
             if (!serverDatabase.clients.includes(username)) {
-                console.log("OK");
                 serverDatabase.clients.push(username)
+                console.log("active:", serverDatabase.clients);
+                //responds with msg and player nr. (1 or 2)
                 let resp = {
                     msg: "OK",
                     queue: serverDatabase.clients.length
@@ -125,9 +126,9 @@ function logout(req, res) {
     req.on("end", function (data) {
         var finish = qs.parse(allData)
         let username = finish.username
-        console.log(serverDatabase.clients);
+        // removes username from clients array
         serverDatabase.clients = serverDatabase.clients.filter(user => user != username)
-        console.log(serverDatabase.clients);
+        console.log("active:", serverDatabase.clients);
         res.end(JSON.stringify({ msg: "ENDED" }))
     })
 }

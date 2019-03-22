@@ -1,9 +1,11 @@
 class Game {
     constructor(root) {
-        this.board = this.generateBoard()
-        this.pieces = this.generatePieces()
-        console.table(this.pieces);
-        this.root = root
+        this.board = this.generateBoard() // generates 2d array
+        this.pieces = this.generatePieces() // generates 2d array
+
+        this.root = root // div to render tree.js inside
+
+        // #region materials and geometries
         this.fieldGeometry = new THREE.BoxGeometry(50, 20, 50);
         this.fieldMaterial1 = new THREE.MeshBasicMaterial({
             side: THREE.DoubleSide,
@@ -26,9 +28,11 @@ class Game {
             map: new THREE.TextureLoader().load("/static/mats/wood.png"),
             color: 0x000000,
         })
-        this.startGame(this.root)
+        // #endregion materials and geometries
+
+        this.startGame(this.root) // starts 3d display in root div
     }
-    generateBoard() {
+    generateBoard() { // generates 2d array reflecting board
         var tab = []
         for (var i = 0; i < 8; i++) {
             tab[i] = []
@@ -38,7 +42,7 @@ class Game {
         }
         return tab
     }
-    generatePieces() {
+    generatePieces() { // generates 2d array reflecting pieces on board
         var tab = []
         for (var i = 0; i < 8; i++) {
             tab[i] = []
@@ -60,7 +64,7 @@ class Game {
         }
         return tab
     }
-    setCamera() {
+    setCamera() { // creates camera
         this.camera = new THREE.PerspectiveCamera(
             45,    // kąt patrzenia kamery (FOV - field of view)
             $(window).width() / $(window).height(),   // proporcje widoku, powinny odpowiadać proporjom naszego ekranu przeglądarki
@@ -76,22 +80,22 @@ class Game {
             this.renderer.setSize($(window).width(), $(window).height())
         })
     }
-    setRenderer(root) {
+    setRenderer(root) { // creates renderer
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setClearColor(0xffffff);
         this.renderer.setSize($(window).width(), $(window).height());
 
         $(root).append(this.renderer.domElement);
     }
-    addAxes() {
+    addAxes() { // creates helper displaying xyz-axes
         var axes = new THREE.AxesHelper(1000)
         this.scene.add(axes)
     }
-    render = () => {
+    render = () => { // function rendering changes (syntax works only in chrome)
         requestAnimationFrame(this.render);
         this.renderer.render(this.scene, this.camera);
     }
-    addBoard() {
+    addBoard() { // generates 3d gameboard display using this.board array
         for (var i in this.board) {
             for (var j in this.board[i]) {
                 var field
@@ -107,7 +111,7 @@ class Game {
             }
         }
     }
-    addPieces() {
+    addPieces() { // generates 3d pieces on gameboard using this.pieces array
         for (var i in this.pieces) {
             for (var j in this.pieces[i]) {
                 if (this.pieces[i][j] != 0) {
@@ -126,13 +130,13 @@ class Game {
             }
         }
     }
-    enableOrbitControl() {
+    enableOrbitControl() { // enables orbit controls of display
         var orbitControl = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         orbitControl.addEventListener('change', () => {
             this.renderer.render(this.scene, this.camera)
         });
     }
-    startGame(root) {
+    startGame(root) { // creates 3d components
         this.scene = new THREE.Scene();
 
         this.setCamera()
@@ -149,7 +153,7 @@ class Game {
 
         this.render()
     }
-    flipCamera() {
+    flipCamera() { // flips camera on x-asis (used for player 2)
         this.camera.position.x = - this.camera.position.x
         this.camera.lookAt(this.scene.position)
     }
