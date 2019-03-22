@@ -10,9 +10,8 @@ $(document).ready(() => {
     ui.displayLoginPanel()
 })
 
-window.addEventListener('beforeunload', function (e) {
-    // Cancel the event
-    e.preventDefault();
-    // Chrome requires returnValue to be set
-    e.returnValue = '';
+window.addEventListener('beforeunload', async function (e) {
+    if (session.username) {
+        await net.logout(session.username)
+    }
 });

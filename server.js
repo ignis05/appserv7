@@ -69,6 +69,9 @@ var server = http.createServer(function (req, res) {
                 case "/login":
                     login(req, res)
                     break
+                case "/logout":
+                    logout(req, res)
+                    break
             }
             break;
     }
@@ -111,7 +114,26 @@ function login(req, res) {
             res.end(JSON.stringify(resp))
         }
     })
+}
 
+function logout(req, res) {
+    var allData = "";
+    req.on("data", function (data) {
+        allData += data;
+    })
+
+    req.on("end", function (data) {
+        var finish = qs.parse(allData)
+        let username = finish.username
+        console.log(serverDatabase.clients);
+        serverDatabase.clients.forEach(user => {
+            if (user == username) {
+
+            }
+        })
+        console.log(serverDatabase.clients);
+        res.end(JSON.stringify({ msg: "OK" }))
+    })
 }
 
 // function servResponse(req, res) {
