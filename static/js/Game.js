@@ -5,11 +5,27 @@ class Game {
         console.table(this.pieces);
         this.root = root
         this.fieldGeometry = new THREE.BoxGeometry(50, 20, 50);
-        this.fieldMaterial1 = new THREE.MeshBasicMaterial({ color: 0xffff00, })
-        this.fieldMaterial2 = new THREE.MeshBasicMaterial({ color: 0x00ffff, })
+        this.fieldMaterial1 = new THREE.MeshBasicMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load("/static/mats/wood.png"),
+            color: 0xffff00,
+        })
+        this.fieldMaterial2 = new THREE.MeshBasicMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load("/static/mats/wood.png"),
+            color: 0x00ffff,
+        })
         this.pieceGeometry = new THREE.CylinderGeometry(20, 20, 20, 64);
-        this.pieceMaterial1 = new THREE.MeshBasicMaterial({ color: 0xff0000, })
-        this.pieceMaterial2 = new THREE.MeshBasicMaterial({ color: 0x000000, })
+        this.pieceMaterial1 = new THREE.MeshBasicMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load("/static/mats/wood.png"),
+            color: 0xff0000,
+        })
+        this.pieceMaterial2 = new THREE.MeshBasicMaterial({
+            side: THREE.DoubleSide,
+            map: new THREE.TextureLoader().load("/static/mats/wood.png"),
+            color: 0x000000,
+        })
         this.startGame(this.root)
     }
     generateBoard() {

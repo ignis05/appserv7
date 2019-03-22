@@ -12,7 +12,7 @@ $(document).ready(async () => {
     if (session.color == 2) game.flipCamera()
 })
 
-window.addEventListener('beforeunload', async e => {
+window.addEventListener('beforeunload', async () => {
     if (session.username) {
         await net.logout(session.username)
     }
