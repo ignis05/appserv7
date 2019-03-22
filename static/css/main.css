@@ -43,6 +43,7 @@ input:focus {
     align-items: center;
     justify-content: space-evenly;
     color: #0ae70a;
+    background: #00000055;
 }
 
 #loginPopup>* {
@@ -52,12 +53,10 @@ input:focus {
 }
 
 #loginPopup>#title {
-    font-size: 40px;
+    font-size: 60px;
+    letter-spacing: 10px;
     font-weight: bold;
-}
-
-#loginPopup>#title {
-    font-size: 40px;
+    user-select: none;
 }
 
 #loginPopup>#nickname {
