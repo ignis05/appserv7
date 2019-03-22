@@ -8,8 +8,8 @@ class Game {
         this.fieldMaterial1 = new THREE.MeshBasicMaterial({ color: 0xffff00, })
         this.fieldMaterial2 = new THREE.MeshBasicMaterial({ color: 0x00ffff, })
         this.pieceGeometry = new THREE.CylinderGeometry(20, 20, 20, 64);
-        this.pieceMaterial1 = new THREE.MeshBasicMaterial({ color: 0x000000, })
-        this.pieceMaterial2 = new THREE.MeshBasicMaterial({ color: 0xff0000, })
+        this.pieceMaterial1 = new THREE.MeshBasicMaterial({ color: 0xff0000, })
+        this.pieceMaterial2 = new THREE.MeshBasicMaterial({ color: 0x000000, })
         this.startGame(this.root)
     }
     generateBoard() {
@@ -133,5 +133,8 @@ class Game {
 
         this.render()
     }
-
+    flipCamera() {
+        this.camera.position.x = - this.camera.position.x
+        this.camera.lookAt(this.scene.position)
+    }
 }
