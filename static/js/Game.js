@@ -91,10 +91,10 @@ class Game {
         var axes = new THREE.AxesHelper(1000)
         this.scene.add(axes)
     }
-    render = () => { // function rendering changes (syntax works only in chrome)
-        requestAnimationFrame(this.render);
-        this.renderer.render(this.scene, this.camera);
-    }
+    // render = () => { // function rendering changes (syntax works only in chrome)
+    //     requestAnimationFrame(this.render);
+    //     this.renderer.render(this.scene, this.camera);
+    // }
     addBoard() { // generates 3d gameboard display using this.board array
         for (var i in this.board) {
             for (var j in this.board[i]) {
@@ -151,7 +151,11 @@ class Game {
 
         this.enableOrbitControl()
 
-        this.render()
+        var render = () => { // function rendering changes 
+            requestAnimationFrame(render);
+            this.renderer.render(this.scene, this.camera);
+        }
+        render()
     }
     flipCamera() { // flips camera on x-asis (used for player 2)
         this.camera.position.x = - this.camera.position.x
