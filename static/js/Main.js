@@ -6,10 +6,10 @@ var session = {
 $(document).ready(() => {
     console.log("ready");
 
-    ui = new UI(document.getElementById("status"), document.getElementById("overlay"), net, session)
-    //ui.displayLoginPanel()
+    ui = new UI(document.getElementById("status"), net, session)
+    // ui.displayLoginPanel()
     ui.displayGame()
-    var game = new Game()
+    var game = new Game("#root")
 })
 
 window.addEventListener('beforeunload', async function (e) {

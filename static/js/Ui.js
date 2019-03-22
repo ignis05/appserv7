@@ -1,11 +1,13 @@
 class UI {
-    constructor(status, overlay, net, session) {
+    constructor(status, net, session) {
         this.status = status
-        this.overlay = overlay
         this.net = net
         this.session = session
     }
     displayLoginPanel() {
+        this.overlay = document.createElement("div")
+        this.overlay.id = "overlay"
+        document.body.appendChild(this.overlay)
         $(this.status).text("STATUS")
         var loginPopup = $("<div id='loginPopup'>")
         $(this.overlay).append(loginPopup)
@@ -53,15 +55,5 @@ class UI {
         let root = document.createElement("div")
         root.id = "root"
         document.body.appendChild(root)
-        this.resizeRoot()
-        $(window).on("resize", this.resizeRoot)
-        $(root)
-            .css("margin-top", 100)
-            .css("background", "black")
-    }
-    resizeRoot() {
-        $("#root")
-            .css("width", $(window).width())
-            .css("height", $(window).height() - 100)
     }
 }
