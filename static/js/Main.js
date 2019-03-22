@@ -7,8 +7,9 @@ $(document).ready(() => {
     console.log("ready");
 
     ui = new UI(document.getElementById("status"), document.getElementById("overlay"), net, session)
-    ui.displayLoginPanel()
+    //ui.displayLoginPanel()
     ui.displayGame()
+    var game = new Game()
 })
 
 window.addEventListener('beforeunload', async function (e) {

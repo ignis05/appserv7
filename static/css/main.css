@@ -37,12 +37,12 @@ input:focus {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
     color: #0ae70a;
 }
 
 #loginPopup>* {
-    margin: 5% 0;
+    margin: 10px 0;
     width: 80%;
     text-align: center;
 }

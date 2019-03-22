@@ -57,7 +57,7 @@ class UI {
         $(window).on("resize", this.resizeRoot)
         $(root)
             .css("margin-top", 100)
-            .css("background", "red")
+            .css("background", "black")
     }
     resizeRoot() {
         $("#root")
