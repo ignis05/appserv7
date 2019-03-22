@@ -1,10 +1,15 @@
 class Game {
     constructor(root) {
         this.board = this.generateBoard()
+        this.pieces = this.generatePieces()
+        console.table(this.pieces);
         this.root = root
         this.fieldGeometry = new THREE.BoxGeometry(50, 20, 50);
         this.fieldMaterial1 = new THREE.MeshBasicMaterial({ color: 0xffff00, })
         this.fieldMaterial2 = new THREE.MeshBasicMaterial({ color: 0x00ffff, })
+        this.pieceGeometry = new THREE.CylinderGeometry(20, 20, 20, 64);
+        this.pieceMaterial1 = new THREE.MeshBasicMaterial({ color: 0x000000, })
+        this.pieceMaterial2 = new THREE.MeshBasicMaterial({ color: 0xff0000, })
         this.startGame(this.root)
     }
     generateBoard() {
@@ -13,6 +18,28 @@ class Game {
             tab[i] = []
             for (var j = 0; j < 8; j++) {
                 tab[i][j] = (j + (i % 2)) % 2
+            }
+        }
+        return tab
+    }
+    generatePieces() {
+        var tab = []
+        for (var i = 0; i < 8; i++) {
+            tab[i] = []
+            for (var j = 0; j < 8; j++) {
+                tab[i][j] = 0
+                if (i == 0 && j % 2 == 0) {
+                    tab[i][j] = 1
+                }
+                if (i == 1 && j % 2 == 1) {
+                    tab[i][j] = 1
+                }
+                if (i == 6 && j % 2 == 0) {
+                    tab[i][j] = 2
+                }
+                if (i == 7 && j % 2 == 1) {
+                    tab[i][j] = 2
+                }
             }
         }
         return tab
@@ -64,9 +91,28 @@ class Game {
             }
         }
     }
+    addPieces() {
+        for (var i in this.pieces) {
+            for (var j in this.pieces[i]) {
+                if (this.pieces[i][j] != 0) {
+                    var piece
+                    if (this.pieces[i][j] == 2) {
+                        piece = new THREE.Mesh(this.pieceGeometry, this.pieceMaterial1)
+                    }
+                    if (this.pieces[i][j] == 1) {
+                        piece = new THREE.Mesh(this.pieceGeometry, this.pieceMaterial2)
+                    }
+                    piece.position.x = 50 * (i - 4) + 25
+                    piece.position.z = 50 * (j - 4) + 25
+                    piece.position.y = 10
+                    this.scene.add(piece)
+                }
+            }
+        }
+    }
     enableOrbitControl() {
         var orbitControl = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-        orbitControl.addEventListener('change', function () {
+        orbitControl.addEventListener('change', () => {
             this.renderer.render(this.scene, this.camera)
         });
     }
@@ -80,6 +126,8 @@ class Game {
         this.addAxes()
 
         this.addBoard()
+
+        this.addPieces()
 
         this.enableOrbitControl()
 
