@@ -109,7 +109,7 @@ function login(req, res) {
         else {
             console.log("server full");
             let resp = {
-                msg: "FILL"
+                msg: "FULL"
             }
             res.end(JSON.stringify(resp))
         }
