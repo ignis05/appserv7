@@ -21,6 +21,7 @@ class UI {
             .append(nickname)
             .append(login)
             .append(reset)
+        nickname.focus()
         login.on("click", async () => {
             console.log("click");
             let username = $("#nickname").val()
@@ -41,5 +42,26 @@ class UI {
                     break;
             }
         })
+        $(nickname).on("keyup", event => {
+            console.log(event.key);
+            if (event.key == "Enter") {
+                login.click()
+            }
+        })
+    }
+    displayGame() {
+        let root = document.createElement("div")
+        root.id = "root"
+        document.body.appendChild(root)
+        this.resizeRoot()
+        $(window).on("resize", this.resizeRoot)
+        $(root)
+            .css("margin-top", 100)
+            .css("background", "red")
+    }
+    resizeRoot() {
+        $("#root")
+            .css("width", $(window).width())
+            .css("height", $(window).height() - 100)
     }
 }

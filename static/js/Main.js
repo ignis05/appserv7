@@ -8,6 +8,7 @@ $(document).ready(() => {
 
     ui = new UI(document.getElementById("status"), document.getElementById("overlay"), net, session)
     ui.displayLoginPanel()
+    ui.displayGame()
 })
 
 window.addEventListener('beforeunload', async function (e) {

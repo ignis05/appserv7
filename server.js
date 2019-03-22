@@ -126,13 +126,9 @@ function logout(req, res) {
         var finish = qs.parse(allData)
         let username = finish.username
         console.log(serverDatabase.clients);
-        serverDatabase.clients.forEach(user => {
-            if (user == username) {
-
-            }
-        })
+        serverDatabase.clients = serverDatabase.clients.filter(user => user != username)
         console.log(serverDatabase.clients);
-        res.end(JSON.stringify({ msg: "OK" }))
+        res.end(JSON.stringify({ msg: "ENDED" }))
     })
 }
 
