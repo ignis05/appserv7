@@ -81,7 +81,7 @@ class Game {
         })
     }
     setRenderer(root) { // creates renderer
-        this.renderer = new THREE.WebGLRenderer();
+        this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.setClearColor(0xffffff);
         this.renderer.setSize($(window).width(), $(window).height());
 
