@@ -3,7 +3,7 @@ var fs = require("fs");
 var qs = require("querystring")
 
 var serverDatabase = {
-    clients: []
+    clients: {}
 }
 
 var server = http.createServer(function (req, res) {
@@ -88,14 +88,21 @@ function login(req, res) {
         var finish = qs.parse(allData)
         let username = finish.username
         console.log(username)
-        if (serverDatabase.clients.length < 2) {
-            if (!serverDatabase.clients.includes(username)) {
-                serverDatabase.clients.push(username)
+        if (!serverDatabase.clients["1"] || !serverDatabase.clients["2"]) { // there is empty slot for player
+            if (!Object.values(serverDatabase.clients).includes(username)) { // if username not taken
+                let which;
+                if (!serverDatabase.clients["1"]) { // if slot 1 free
+                    which = "1"
+                }
+                else { // if slot 2 free
+                    which = "2"
+                }
+                serverDatabase.clients[which] = username
                 console.log("active:", serverDatabase.clients);
                 //responds with msg and player nr. (1 or 2)
                 let resp = {
                     msg: "OK",
-                    queue: serverDatabase.clients.length
+                    queue: parseInt(which)
                 }
                 res.end(JSON.stringify(resp))
             }
@@ -127,7 +134,12 @@ function logout(req, res) {
         var finish = qs.parse(allData)
         let username = finish.username
         // removes username from clients array
-        serverDatabase.clients = serverDatabase.clients.filter(user => user != username)
+        if (serverDatabase.clients["1"] == username) {
+            delete serverDatabase.clients["1"]
+        }
+        else {
+            delete serverDatabase.clients["2"]
+        }
         console.log("active:", serverDatabase.clients);
         res.end(JSON.stringify({ msg: "ENDED" }))
     })
