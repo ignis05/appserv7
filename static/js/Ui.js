@@ -1,7 +1,6 @@
 class UI {
-    constructor(status, net) {
+    constructor(status) {
         this.status = status
-        this.net = net
     }
     displayLoginPanel() {
         return new Promise(resolve => {
@@ -36,7 +35,7 @@ class UI {
             login.on("click", async () => {
                 let username = $("#nickname").val()
                 if (username == "") return
-                let response = await this.net.login(username)
+                let response = await Net.login(username)
                 switch (response.msg) {
                     case "OK": // if login successfull
                         $(this.overlay).remove()

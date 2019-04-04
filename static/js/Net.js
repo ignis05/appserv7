@@ -1,10 +1,7 @@
 class Net {
-    constructor() {
-        console.log("Net constructed");
-    }
-    login(username) {
+    static login(username) {
         console.log(`logging in ${username}`);
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             $.ajax({
                 url: "/login",
                 data: { username: username },
@@ -16,14 +13,15 @@ class Net {
                 },
                 error: function (xhr, status, error) {
                     console.log(xhr);
-                    throw "error"
+                    reject(new Error(xhr))
                 },
             });
         })
     }
-    logout(username) {
-        console.log(`logging in ${username}`);
-        return new Promise(resolve => {
+    
+    static logout(username) {
+        console.log(`logging out ${username}`);
+        return new Promise((resolve, reject) => {
             $.ajax({
                 url: "/logout",
                 data: { username: username },
@@ -35,7 +33,7 @@ class Net {
                 },
                 error: function (xhr, status, error) {
                     console.log(xhr);
-                    throw "error"
+                    reject(new Error(xhr))
                 },
             });
         })

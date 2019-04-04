@@ -1,4 +1,3 @@
-var net = new Net()
 var ui;
 var session;
 $(document).ready(async () => {
@@ -8,7 +7,7 @@ $(document).ready(async () => {
         window.open(window.location.href);
     })
 
-    ui = new UI(document.getElementById("status"), net)
+    ui = new UI(document.getElementById("status"))
     ui.displayGame()
     var game = new Game("#root") // creates 3d display in #root div
 
@@ -19,6 +18,6 @@ $(document).ready(async () => {
 
 window.addEventListener('beforeunload', async () => { // triggers on tab close, page refreash, etc.
     if (session.username) { // if logged in send logout request
-        await net.logout(session.username)
+        await Net.logout(session.username)
     }
 });
