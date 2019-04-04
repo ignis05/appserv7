@@ -44,16 +44,16 @@ class UI {
                         resolve({ username: username, color: response.queue, }) // resume code execution in main.js
                         break;
                     case "FULL": // if already 2 logged in users
-                        window.alert("server is full")
+                        this.alert("server full", "there are already 2 players connected to server")
                         break;
                     case "LOGGED": // if user with same nickname is logged in
-                        window.alert("this user is already logged in")
+                        this.alert("username taken", "there is someone using this nickname right now")
                         break;
                 }
             })
 
             $(nickname).on("keyup", event => { // triggers click on login button on enter
-                console.log(event.key);
+                // console.log(event.key);
                 if (event.key == "Enter") {
                     login.click()
                 }
@@ -64,5 +64,27 @@ class UI {
         let root = document.createElement("div")
         root.id = "root"
         document.body.appendChild(root)
+    }
+    alert(title, msg) {
+        console.log("showing alert");
+        let alertOverlay = $("<div id=alertOverlay>")
+        alertOverlay.appendTo("body")
+        let alert = $("<div id=alert>")
+        alert.appendTo(alertOverlay)
+        let close = $("<div id=close>")
+        close.appendTo(alert)
+        let x = $("<div>")
+        x.text("X")
+        x.css("font-weight", "bold")
+        x.appendTo(close)
+        let tl = $("<div id=title>")
+        tl.text(title)
+        tl.appendTo(alert)
+        let bd = $("<div id=body>")
+        bd.text(msg)
+        bd.appendTo(alert)
+        close.on("click", () => {
+            alertOverlay.remove()
+        })
     }
 }

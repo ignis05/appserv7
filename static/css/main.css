@@ -96,3 +96,60 @@ input:focus {
     margin: 0;
     padding: 0;
 }
+
+#alertOverlay {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #00000033;
+    display: flex;
+    padding-top: 200px;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 1000;
+    user-select: none;
+}
+
+#alertOverlay #alert {
+    width: 400px;
+    height: 200px;
+    border-radius: 20px;
+    border: 3px solid black;
+    background: white;
+    position: relative;
+}
+
+#alertOverlay #alert #close {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: red;
+    border-radius: 0 10px 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    cursor: pointer;
+}
+
+#alertOverlay #alert #title{
+    width: 100%;
+    height: 60px;
+    position: absolute;
+    top:0;
+    left:0;
+    text-align: center;
+}
+
+#alertOverlay #alert #body{
+    width: 100%;
+    height: auto;
+    position: absolute;
+    top:60px;
+    left:0;
+    text-align: center;
+}
