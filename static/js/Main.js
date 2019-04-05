@@ -21,6 +21,7 @@ $(document).ready(async () => {
     let status_temp = $(ui.status).html()
     $(ui.status).html(status_temp + `, przeciwko graczowi <span style='color:violet'>${session.enemy}</span>`)
     ui.hideWait()
+    game.addPieces()
 })
 
 window.addEventListener('beforeunload', async () => { // triggers on tab close, page refreash, etc.

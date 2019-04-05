@@ -1,7 +1,9 @@
 class Game {
     constructor(root) {
         this.board = this.generateBoard() // generates 2d array
-        this.pieces = this.generatePieces() // generates 2d array
+        this.piecesTab = this.generatepiecesTab() // generates 2d array
+
+        this.pieces = [] // tab for pieces Class elements
 
         this.root = root // div to render tree.js inside
 
@@ -20,6 +22,9 @@ class Game {
         // #endregion materials and geometries
 
         this.startGame(this.root) // starts 3d display in root div
+        $(document).on("click", () => {
+            this.useRayCaster()
+        })
     }
     generateBoard() { // generates 2d array reflecting board
         var tab = []
@@ -31,7 +36,7 @@ class Game {
         }
         return tab
     }
-    generatePieces() { // generates 2d array reflecting pieces on board
+    generatepiecesTab() { // generates 2d array reflecting piecesTab on board
         var tab = []
         for (var i = 0; i < 8; i++) {
             tab[i] = []
@@ -69,6 +74,26 @@ class Game {
             this.renderer.setSize($(window).width(), $(window).height())
         })
     }
+    setRaycaster() {
+        // raycaster
+        this.raycaster = new THREE.Raycaster(); // obiekt symulujący "rzucanie" promieni
+        this.mouseVector = new THREE.Vector2() // ten wektor czyli pozycja w przestrzeni 2D na ekranie(x,y) 
+    }
+    useRayCaster() {
+        this.mouseVector.x = (event.clientX / $(window).width()) * 2 - 1
+        this.mouseVector.y = -(event.clientY / $(window).height()) * 2 + 1
+        this.raycaster.setFromCamera(this.mouseVector, this.camera);
+
+        var intersects = this.raycaster.intersectObjects(this.pieces);
+
+        if (intersects.length > 0) {
+            let piece = intersects[0].object
+            console.log(piece);
+            if (piece.owner == session.username) {
+                console.log("clicked piece");
+            }
+        }
+    }
     setRenderer(root) { // creates renderer
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.setClearColor(0xffffff);
@@ -100,16 +125,20 @@ class Game {
             }
         }
     }
-    addPieces() { // generates 3d pieces on gameboard using this.pieces array
-        for (var i in this.pieces) {
-            for (var j in this.pieces[i]) {
-                if (this.pieces[i][j] != 0) {
+    addPieces() { // generates 3d piecesTab on gameboard using this.piecesTab array
+        for (var i in this.piecesTab) {
+            for (var j in this.piecesTab[i]) {
+                if (this.piecesTab[i][j] != 0) {
                     var piece
-                    if (this.pieces[i][j] == 2) {
-                        piece = new Piece(0xff0000)
+                    if (this.piecesTab[i][j] == 2) {
+                        console.log(session.username);
+                        piece = new Piece(0xff0000, session.username)
+                        this.pieces.push(piece)
                     }
-                    if (this.pieces[i][j] == 1) {
-                        piece = new Piece(0x000000)
+                    if (this.piecesTab[i][j] == 1) {
+                        console.log(session.username);
+                        piece = new Piece(0x000000, session.username)
+                        this.pieces.push(piece)
                     }
                     piece.position.x = 50 * (i - 4) + 25
                     piece.position.z = 50 * (j - 4) + 25
@@ -130,13 +159,15 @@ class Game {
 
         this.setCamera()
 
+        this.setRaycaster()
+
         this.setRenderer(root)
 
         this.addAxes()
 
         this.addBoard()
 
-        this.addPieces()
+        // this.addPieces()
 
         this.enableOrbitControl()
 

@@ -1,5 +1,5 @@
 class Piece extends THREE.Mesh {
-    constructor(color) {
+    constructor(color, username) {
         let pieceGeometry = new THREE.CylinderGeometry(20, 20, 20, 64);
         let pieceMaterial = new THREE.MeshBasicMaterial({
             side: THREE.DoubleSide,
@@ -7,5 +7,6 @@ class Piece extends THREE.Mesh {
             color: color,
         })
         super(pieceGeometry, pieceMaterial)
+        this.owner = username
     }
 }
