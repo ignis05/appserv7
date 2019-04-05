@@ -17,17 +17,6 @@ class Game {
             map: new THREE.TextureLoader().load("/static/mats/wood.png"),
             color: 0x00ffff,
         })
-        this.pieceGeometry = new THREE.CylinderGeometry(20, 20, 20, 64);
-        this.pieceMaterial1 = new THREE.MeshBasicMaterial({
-            side: THREE.DoubleSide,
-            map: new THREE.TextureLoader().load("/static/mats/wood.png"),
-            color: 0xff0000,
-        })
-        this.pieceMaterial2 = new THREE.MeshBasicMaterial({
-            side: THREE.DoubleSide,
-            map: new THREE.TextureLoader().load("/static/mats/wood.png"),
-            color: 0x000000,
-        })
         // #endregion materials and geometries
 
         this.startGame(this.root) // starts 3d display in root div
@@ -71,7 +60,7 @@ class Game {
             0.1,    // minimalna renderowana odległość
             10000    // maxymalna renderowana odległość od kamery 
         );
-        this.camera.position.set(400, 200, 0)
+        this.camera.position.set(500, 400, 0)
         this.camera.lookAt(this.scene.position)
 
         $(window).on("resize", () => {
@@ -117,10 +106,10 @@ class Game {
                 if (this.pieces[i][j] != 0) {
                     var piece
                     if (this.pieces[i][j] == 2) {
-                        piece = new THREE.Mesh(this.pieceGeometry, this.pieceMaterial1)
+                        piece = new Piece(0xff0000)
                     }
                     if (this.pieces[i][j] == 1) {
-                        piece = new THREE.Mesh(this.pieceGeometry, this.pieceMaterial2)
+                        piece = new Piece(0x000000)
                     }
                     piece.position.x = 50 * (i - 4) + 25
                     piece.position.z = 50 * (j - 4) + 25
