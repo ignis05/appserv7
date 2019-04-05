@@ -34,7 +34,7 @@ class Game {
         this.myTurn = true
         console.log("TCL: Game -> startFirst -> this.myTurn", this.myTurn)
     }
-    async startSecond(restart) {
+    async startSecond(restart) { // restart is true if restarting session
         this.myTurn = false
         console.log("TCL: Game -> startSecond -> this.myTurn", this.myTurn)
         await Net.sendBoard(session.color, this.piecesTab)
