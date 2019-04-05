@@ -38,5 +38,28 @@ class Net {
             });
         })
     }
+
+    static request(username, request) {
+        console.log(`logging out ${username}`);
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: "/request",
+                data: {
+                    username: username,
+                    request: request
+                },
+                type: "POST",
+                success: data => {
+                    console.log("success");
+                    var obj = JSON.parse(data)
+                    resolve(obj)
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr);
+                    reject(new Error(xhr))
+                },
+            });
+        })
+    }
 }
 console.log("Net.js loaded");

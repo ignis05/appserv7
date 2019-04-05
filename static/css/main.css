@@ -136,20 +136,47 @@ input:focus {
     cursor: pointer;
 }
 
-#alertOverlay #alert #title{
+#alertOverlay #alert #title {
     width: 100%;
     height: 60px;
     position: absolute;
-    top:0;
-    left:0;
+    top: 0;
+    left: 0;
     text-align: center;
 }
 
-#alertOverlay #alert #body{
+#alertOverlay #alert #body {
     width: 100%;
     height: auto;
     position: absolute;
-    top:60px;
-    left:0;
+    top: 60px;
+    left: 0;
     text-align: center;
+}
+
+#overlayWait {
+    color: #0ae70a;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #00000088;
+    display: flex;
+    padding-top: 200px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    z-index: 1000;
+    user-select: none;
+}
+
+#overlayWait #msg {
+    font-size: 40px;
+    text-align: center;
+}
+
+#overlayWait img {
+    margin-top: 50px;
+    width: 100px;
 }

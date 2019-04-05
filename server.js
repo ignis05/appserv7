@@ -72,6 +72,9 @@ var server = http.createServer(function (req, res) {
                 case "/logout":
                     logout(req, res)
                     break
+                case "/request":
+                    request(req, res)
+                    break
             }
             break;
     }
@@ -143,6 +146,41 @@ function logout(req, res) {
         console.log("active:", serverDatabase.clients);
         res.end(JSON.stringify({ msg: "ENDED" }))
     })
+}
+
+function request(req, res) {
+    var allData = "";
+    req.on("data", function (data) {
+        allData += data;
+    })
+
+    req.on("end", function (data) {
+        var finish = qs.parse(allData)
+        let username = finish.username
+        let request = finish.request
+        console.log(request);
+        switch (request) {
+            case "enemy":
+                Request.enemy(req, res, username)
+                break
+            default:
+                res.end(JSON.stringify({ msg: "ERROR" }))
+
+        }
+    })
+}
+
+class Request {
+    static enemy(req, res, username) {
+        console.log(`${username}requested enemy`);
+        if (serverDatabase.clients["1"] == username && serverDatabase.clients["2"] != undefined) {
+            res.end(JSON.stringify({ msg: "DATA", enemy: serverDatabase.clients["2"] }))
+        }
+        if (serverDatabase.clients["2"] == username && serverDatabase.clients["1"] != undefined) {
+            res.end(JSON.stringify({ msg: "DATA", enemy: serverDatabase.clients["1"] }))
+        }
+        res.end(JSON.stringify({ msg: "WAIT" }))
+    }
 }
 
 // function servResponse(req, res) {
