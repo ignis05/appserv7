@@ -141,6 +141,7 @@ function logout(req, res) {
     req.on("end", function (data) {
         var finish = qs.parse(allData)
         let username = finish.username
+        console.log(`logging out ${username}`);
         // removes username from clients array
         if (serverDatabase.clients["1"] == username) {
             delete serverDatabase.clients["1"]
@@ -148,7 +149,6 @@ function logout(req, res) {
         else {
             delete serverDatabase.clients["2"]
         }
-        console.log("active:", serverDatabase.clients);
         res.end(JSON.stringify({ msg: "ENDED" }))
     })
 }
@@ -177,6 +177,7 @@ function sendBoard(req, res) {
     req.on("end", function (data) {
         var finish = JSON.parse(allData)
         let which = finish.whichPlayer
+        console.log("received board from ", serverDatabase.clients[which]);
         serverDatabase.board[which] = finish.board
         serverDatabase.globalBoard = finish.board
         res.end(JSON.stringify({ msg: "OK" }))
@@ -209,10 +210,13 @@ class Request {
         let which = Object.values(serverDatabase.clients).indexOf(username) + 1
         which = which.toString()
         // console.log(which);
-        if (serverDatabase.globalBoard != serverDatabase.board[which])
+        if (serverDatabase.globalBoard != serverDatabase.board[which]) {
+            console.log("sending board to " + username)
             res.end(JSON.stringify({ msg: "DATA", board: serverDatabase.globalBoard }))
-        else
+        }
+        else {
             res.end(JSON.stringify({ msg: "WAIT" }))
+        }
     }
 }
 

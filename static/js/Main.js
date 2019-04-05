@@ -22,7 +22,7 @@ $(document).ready(async () => {
     enableGame()
 })
 
-function enableGame() {
+function enableGame(restart) {
     let color = (session.color == 1 ? "red" : "black")
     $(ui.status).html(`Welcome <span style='color:blue'>${session.username}</span>, you are playing with <span style='color:${color}'>${color} checkers</span> against player <span style='color:violet'>${session.enemy}</span>`)
     ui.hideWait()
@@ -31,7 +31,8 @@ function enableGame() {
         game.startFirst()
     }
     else {
-        game.startSecond()
+        console.log("startSecond");
+        game.startSecond(restart)
     }
     listenForDisconnect()
 }
@@ -43,8 +44,7 @@ async function listenForDisconnect() {
     console.log("resolved enemy");
     session.enemy = data.enemy
     game.piecesTab = game.generatePiecesTab()
-    await Net.sendBoard(session.color, game.piecesTab)
-    enableGame()
+    enableGame(true)
 }
 
 window.addEventListener('beforeunload', async () => { // triggers on tab close, page refreash, etc.

@@ -32,14 +32,21 @@ class Game {
     async startFirst() {
         await Net.sendBoard(session.color, this.piecesTab)
         this.myTurn = true
+        console.log("TCL: Game -> startFirst -> this.myTurn", this.myTurn)
     }
-    async startSecond() {
+    async startSecond(restart) {
         this.myTurn = false
+        console.log("TCL: Game -> startSecond -> this.myTurn", this.myTurn)
         await Net.sendBoard(session.color, this.piecesTab)
         let response = await Net.wait(session.username, "getBoard")
+        if (restart) {
+            await Net.sendBoard(session.color, this.piecesTab)
+            response = await Net.wait(session.username, "getBoard")
+        }
         this.piecesTab = response.board
         this.renderPieces()
         this.myTurn = true
+        console.log("TCL: Game -> startSecond -> this.myTurn", this.myTurn)
     }
     addRaycasterListeners() {
         $("#root").on("click", () => {
@@ -135,11 +142,13 @@ class Game {
         this.renderPieces()
         this.deactivateField()
         this.myTurn = false
+        console.log("TCL: Game -> raycasterMove -> this.myTurn", this.myTurn)
         await Net.sendBoard(session.color, this.piecesTab)
         let response = await Net.wait(session.username, "getBoard")
         this.piecesTab = response.board
         this.renderPieces()
         this.myTurn = true
+        console.log("TCL: Game -> raycasterMove -> this.myTurn", this.myTurn)
     }
     raycasterField() {
         this.mouseVector.x = (event.clientX / $(window).width()) * 2 - 1
