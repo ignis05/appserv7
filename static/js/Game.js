@@ -43,16 +43,16 @@ class Game {
             for (var j = 0; j < 8; j++) {
                 tab[i][j] = 0
                 if (i == 0 && j % 2 == 0) {
-                    tab[i][j] = 1
+                    tab[i][j] = 2
                 }
                 if (i == 1 && j % 2 == 1) {
-                    tab[i][j] = 1
+                    tab[i][j] = 2
                 }
                 if (i == 6 && j % 2 == 0) {
-                    tab[i][j] = 2
+                    tab[i][j] = 1
                 }
                 if (i == 7 && j % 2 == 1) {
-                    tab[i][j] = 2
+                    tab[i][j] = 1
                 }
             }
         }
@@ -92,6 +92,9 @@ class Game {
             if (piece.owner == session.username) {
                 console.log("clicked piece");
             }
+            else {
+                console.log("clicked enemy");
+            }
         }
     }
     setRenderer(root) { // creates renderer
@@ -130,14 +133,14 @@ class Game {
             for (var j in this.piecesTab[i]) {
                 if (this.piecesTab[i][j] != 0) {
                     var piece
-                    if (this.piecesTab[i][j] == 2) {
-                        console.log(session.username);
-                        piece = new Piece(0xff0000, session.username)
+                    if (this.piecesTab[i][j] == 1) {
+                        let owner = (session.color == 1 ? session.username : session.enemy)
+                        piece = new Piece(0xff0000, owner)
                         this.pieces.push(piece)
                     }
-                    if (this.piecesTab[i][j] == 1) {
-                        console.log(session.username);
-                        piece = new Piece(0x000000, session.username)
+                    if (this.piecesTab[i][j] == 2) {
+                        let owner = (session.color == 2 ? session.username : session.enemy)
+                        piece = new Piece(0x000000, owner)
                         this.pieces.push(piece)
                     }
                     piece.position.x = 50 * (i - 4) + 25
