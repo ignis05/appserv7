@@ -62,6 +62,28 @@ class Net {
         })
     }
 
+    static sendBoard(whichPlayer, board) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: "/sendBoard",
+                data: JSON.stringify({
+                    whichPlayer: whichPlayer,
+                    board: board
+                }),
+                type: "POST",
+                success: data => {
+                    // console.log("success");
+                    var obj = JSON.parse(data)
+                    resolve(obj)
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr);
+                    reject(new Error(xhr))
+                },
+            });
+        })
+    }
+
     static wait(username, request) {
         return new Promise(resolve => {
             var interval = setInterval(async () => {

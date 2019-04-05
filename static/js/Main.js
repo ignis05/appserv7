@@ -27,6 +27,12 @@ function enableGame() {
     $(ui.status).html(`Welcome <span style='color:blue'>${session.username}</span>, you are playing with <span style='color:${color}'>${color} checkers</span> against player <span style='color:violet'>${session.enemy}</span>`)
     ui.hideWait()
     game.renderPieces()
+    if (session.color == 1) {
+        game.startFirst()
+    }
+    else {
+        game.startSecond()
+    }
     listenForDisconnect()
 }
 
@@ -36,6 +42,8 @@ async function listenForDisconnect() {
     let data = await Net.wait(session.username, "enemy")
     console.log("resolved enemy");
     session.enemy = data.enemy
+    game.piecesTab = game.generatePiecesTab()
+    await Net.sendBoard(session.color, game.piecesTab)
     enableGame()
 }
 

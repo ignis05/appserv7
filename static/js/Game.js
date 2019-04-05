@@ -1,5 +1,6 @@
 class Game {
     constructor(root) {
+        this.myTurn = false
         this.boardTab = this.generateBoardTab() // generates 2d array
         this.piecesTab = this.generatePiecesTab() // generates 2d array
 
@@ -28,15 +29,31 @@ class Game {
         this.startGame(this.root) // starts 3d display in root div
         this.addRaycasterListeners()
     }
+    async startFirst() {
+        await Net.sendBoard(session.color, this.piecesTab)
+        this.myTurn = true
+    }
+    async startSecond() {
+        this.myTurn = false
+        await Net.sendBoard(session.color, this.piecesTab)
+        let response = await Net.wait(session.username, "getBoard")
+        this.piecesTab = response.board
+        this.renderPieces()
+        this.myTurn = true
+    }
     addRaycasterListeners() {
         $("#root").on("click", () => {
-            if (this.activePiece && this.activeField)
-                this.raycasterMove()
-            this.raycasterPiece()
+            if (this.myTurn) {
+                if (this.activePiece && this.activeField)
+                    this.raycasterMove()
+                this.raycasterPiece()
+            }
         })
         $("#root").on("mousemove", () => {
-            if (this.activePiece)
-                this.raycasterField()
+            if (this.myTurn) {
+                if (this.activePiece)
+                    this.raycasterField()
+            }
         })
     }
     generateBoardTab() { // generates 2d array reflecting board
@@ -97,7 +114,7 @@ class Game {
         }
     }
     deactivatePiece() {
-        let _piece = new Piece((session.color ? 0xff0000 : 0x000000), session.username, this.activePiece.posX, this.activePiece.posY)
+        let _piece = new Piece((session.color == 1 ? 0xff0000 : 0x000000), session.username, this.activePiece.posX, this.activePiece.posY)
         this.pieces[this.pieces.indexOf(this.activePiece)] = _piece
         this.scene.remove(this.activePiece)
         this.scene.add(_piece)
@@ -109,8 +126,7 @@ class Game {
         this.raycaster = new THREE.Raycaster(); // obiekt symulujący "rzucanie" promieni
         this.mouseVector = new THREE.Vector2() // ten wektor czyli pozycja w przestrzeni 2D na ekranie(x,y) 
     }
-    raycasterMove() {
-        console.log("RAYCASTER MOVE");
+    async raycasterMove() {
         let piece = this.activePiece
         let field = this.activeField
         this.piecesTab[field.posX][field.posY] = this.piecesTab[piece.posX][piece.posY]
@@ -118,6 +134,12 @@ class Game {
         this.activePiece = undefined
         this.renderPieces()
         this.deactivateField()
+        this.myTurn = false
+        await Net.sendBoard(session.color, this.piecesTab)
+        let response = await Net.wait(session.username, "getBoard")
+        this.piecesTab = response.board
+        this.renderPieces()
+        this.myTurn = true
     }
     raycasterField() {
         this.mouseVector.x = (event.clientX / $(window).width()) * 2 - 1

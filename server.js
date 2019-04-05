@@ -3,13 +3,15 @@ var fs = require("fs");
 var qs = require("querystring")
 
 var serverDatabase = {
-    clients: {}
+    clients: {},
+    board: {},
+    globalBoard: []
 }
 
 var server = http.createServer(function (req, res) {
     switch (req.method) {
         case "GET":
-            console.log(`requested adres: ${decodeURI(req.url)}`)
+            // console.log(`requested adres: ${decodeURI(req.url)}`)
             var fileEXTEN = req.url.split(".")[req.url.split(".").length - 1]
             if (req.url == "/") {
                 fs.readFile(`static/html/index.html`, function (error, data) {
@@ -22,7 +24,7 @@ var server = http.createServer(function (req, res) {
                         res.writeHead(200, { 'Content-Type': 'text/html;;charset=utf-8' });
                         res.write(data);
                         res.end();
-                        console.log("send index");
+                        // console.log("send index");
                     }
                 })
             }
@@ -59,7 +61,7 @@ var server = http.createServer(function (req, res) {
                         }
                         res.write(data);
                         res.end();
-                        console.log(`send file: ${decodeURI(req.url)}`)
+                        // console.log(`send file: ${decodeURI(req.url)}`)
                     }
                 });
             }
@@ -74,6 +76,9 @@ var server = http.createServer(function (req, res) {
                     break
                 case "/request":
                     request(req, res)
+                    break
+                case "/sendBoard":
+                    sendBoard(req, res)
                     break
             }
             break;
@@ -163,6 +168,21 @@ function request(req, res) {
     })
 }
 
+function sendBoard(req, res) {
+    var allData = "";
+    req.on("data", function (data) {
+        allData += data;
+    })
+
+    req.on("end", function (data) {
+        var finish = JSON.parse(allData)
+        let which = finish.whichPlayer
+        serverDatabase.board[which] = finish.board
+        serverDatabase.globalBoard = finish.board
+        res.end(JSON.stringify({ msg: "OK" }))
+    })
+}
+
 class Request {
     static enemy(req, res, username) { // responds with enemy name
         // console.log(`${username} requested enemy`);
@@ -183,6 +203,16 @@ class Request {
         else {
             res.end(JSON.stringify({ msg: "END" }))
         }
+    }
+    static getBoard(req, res, username) { // sets board if modified
+        // console.log(`${username} requested board`);
+        let which = Object.values(serverDatabase.clients).indexOf(username) + 1
+        which = which.toString()
+        // console.log(which);
+        if (serverDatabase.globalBoard != serverDatabase.board[which])
+            res.end(JSON.stringify({ msg: "DATA", board: serverDatabase.globalBoard }))
+        else
+            res.end(JSON.stringify({ msg: "WAIT" }))
     }
 }
 
