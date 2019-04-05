@@ -128,7 +128,11 @@ class Game {
             }
         }
     }
-    addPieces() { // generates 3d piecesTab on gameboard using this.piecesTab array
+    renderPieces() { // generates 3d piecesTab on gameboard using this.piecesTab array
+        this.pieces.forEach(piece => {
+            this.scene.remove(piece)
+        });
+        this.pieces = []
         for (var i in this.piecesTab) {
             for (var j in this.piecesTab[i]) {
                 if (this.piecesTab[i][j] != 0) {
@@ -170,7 +174,7 @@ class Game {
 
         this.addBoard()
 
-        // this.addPieces()
+        // this.renderPieces()
 
         this.enableOrbitControl()
 

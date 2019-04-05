@@ -40,7 +40,7 @@ class Net {
     }
 
     static request(username, request) {
-        console.log(`logging out ${username}`);
+        // console.log(`reqiesting ${request} for ${username}`);
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: "/request",
@@ -50,7 +50,7 @@ class Net {
                 },
                 type: "POST",
                 success: data => {
-                    console.log("success");
+                    // console.log("success");
                     var obj = JSON.parse(data)
                     resolve(obj)
                 },
@@ -66,8 +66,21 @@ class Net {
         return new Promise(resolve => {
             var interval = setInterval(async () => {
                 let resp = await Net.request(username, request)
-                console.log(resp);
+                // console.log(resp);
                 if (resp.msg == "DATA") {
+                    clearInterval(interval)
+                    resolve(resp)
+                }
+            }, 500)
+        })
+    }
+
+    static detectEnd(username) {
+        return new Promise(resolve => {
+            var interval = setInterval(async () => {
+                let resp = await Net.request(username, "detectEnd")
+                // console.log(resp);
+                if (resp.msg == "END") {
                     clearInterval(interval)
                     resolve(resp)
                 }

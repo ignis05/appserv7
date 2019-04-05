@@ -55,7 +55,6 @@ var server = http.createServer(function (req, res) {
                                 res.writeHead(200, { "Content-type": "audio/mpeg" });
                                 break
                             default:
-                            console.log("here");
                                 res.writeHead(200, { 'Content-Type': 'text/plain;charset=utf-8' });
                         }
                         res.write(data);
@@ -91,7 +90,7 @@ function login(req, res) {
     req.on("end", function (data) {
         var finish = qs.parse(allData)
         let username = finish.username
-        console.log(username)
+        console.log("logging in: " + username)
         if (!serverDatabase.clients["1"] || !serverDatabase.clients["2"]) { // there is empty slot for player
             if (!Object.values(serverDatabase.clients).includes(username)) { // if username not taken
                 let which;
@@ -160,19 +159,12 @@ function request(req, res) {
         let username = finish.username
         let request = finish.request
         // console.log(request);
-        switch (request) {
-            case "enemy":
-                Request.enemy(req, res, username)
-                break
-            default:
-                res.end(JSON.stringify({ msg: "ERROR" }))
-
-        }
+        Request[request](req, res, username)
     })
 }
 
 class Request {
-    static enemy(req, res, username) {
+    static enemy(req, res, username) { // responds with enemy name
         // console.log(`${username} requested enemy`);
         if (serverDatabase.clients["1"] == username && serverDatabase.clients["2"] != undefined) {
             res.end(JSON.stringify({ msg: "DATA", enemy: serverDatabase.clients["2"] }))
@@ -181,6 +173,16 @@ class Request {
             res.end(JSON.stringify({ msg: "DATA", enemy: serverDatabase.clients["1"] }))
         }
         res.end(JSON.stringify({ msg: "WAIT" }))
+    }
+    static detectEnd(req, res, username) { // used to disconnect client on enemy leave
+        // console.log(`${username} requested session`);
+        let x = Object.values(serverDatabase.clients).length
+        if (x == 2) {
+            res.end(JSON.stringify({ msg: "OK" }))
+        }
+        else {
+            res.end(JSON.stringify({ msg: "END" }))
+        }
     }
 }
 

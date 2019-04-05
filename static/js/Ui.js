@@ -88,11 +88,11 @@ class UI {
             alertOverlay.remove()
         })
     }
-    displayWait() {
+    displayWait(text) {
         let overlay = $("<div id=overlayWait>")
         overlay.appendTo("body")
         let msg = $("<div id=msg>")
-        msg.text("Czekaj na drugiego gracza...")
+        msg.text(text)
         msg.appendTo(overlay)
         let img = new Image()
         img.src = "/static/img/loading.gif"
