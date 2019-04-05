@@ -12,20 +12,6 @@ class Game {
 
         this.root = root // div to render tree.js inside
 
-        // #region materials and geometries
-        this.fieldGeometry = new THREE.BoxGeometry(50, 20, 50);
-        this.fieldMaterial1 = new THREE.MeshBasicMaterial({
-            side: THREE.DoubleSide,
-            map: new THREE.TextureLoader().load("/static/mats/wood.png"),
-            color: 0xa59a93,
-        })
-        this.fieldMaterial2 = new THREE.MeshBasicMaterial({
-            side: THREE.DoubleSide,
-            map: new THREE.TextureLoader().load("/static/mats/wood.png"),
-            color: 0x8c4010,
-        })
-        // #endregion materials and geometries
-
         this.startGame(this.root) // starts 3d display in root div
         this.addRaycasterListeners()
     }
