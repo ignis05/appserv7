@@ -39,9 +39,8 @@ class UI {
                 switch (response.msg) {
                     case "OK": // if login successfull
                         $(this.overlay).remove()
-                        let which = (response.queue == 1 ? "czerwonymi" : "czarnymi")
                         let color = (response.queue == 1 ? "red" : "black")
-                        $(this.status).html(`Witaj <span style='color:blue'>${username}</span>, grasz <span style='color:${color}'>${which}</span>`)
+                        $(this.status).html(`Welcome <span style='color:blue'>${username}</span>, you are playing with <span style='color:${color}'>${color} checkers</span>`)
                         resolve({ username: username, color: response.queue, }) // resume code execution in main.js
                         break;
                     case "FULL": // if already 2 logged in users

@@ -23,9 +23,8 @@ $(document).ready(async () => {
 })
 
 function enableGame() {
-    let which = (session.color == 1 ? "czerwonymi" : "czarnymi")
     let color = (session.color == 1 ? "red" : "black")
-    $(ui.status).html(`Witaj <span style='color:blue'>${session.username}</span>, grasz <span style='color:${color}'>${which}</span> przeciwko graczowi <span style='color:violet'>${session.enemy}</span>`)
+    $(ui.status).html(`Welcome <span style='color:blue'>${session.username}</span>, you are playing with <span style='color:${color}'>${color} checkers</span> against player <span style='color:violet'>${session.enemy}</span>`)
     ui.hideWait()
     game.renderPieces()
     listenForDisconnect()
