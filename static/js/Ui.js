@@ -40,7 +40,8 @@ class UI {
                     case "OK": // if login successfull
                         $(this.overlay).remove()
                         let which = (response.queue == 1 ? "czerwonymi" : "czarnymi")
-                        $(this.status).html(`USER_ADDED<br>Witaj <span style='color:red'>${username}</span>, grasz ${which}`)
+                        let color = (response.queue == 1 ? "red" : "black")
+                        $(this.status).html(`Witaj <span style='color:blue'>${username}</span>, grasz <span style='color:${color}'>${which}</span>`)
                         resolve({ username: username, color: response.queue, }) // resume code execution in main.js
                         break;
                     case "FULL": // if already 2 logged in users
@@ -96,5 +97,8 @@ class UI {
         let img = new Image()
         img.src = "/static/img/loading.gif"
         overlay.append(img)
+    }
+    hideWait() {
+        $("#overlayWait").remove()
     }
 }

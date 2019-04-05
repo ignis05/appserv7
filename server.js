@@ -55,6 +55,7 @@ var server = http.createServer(function (req, res) {
                                 res.writeHead(200, { "Content-type": "audio/mpeg" });
                                 break
                             default:
+                            console.log("here");
                                 res.writeHead(200, { 'Content-Type': 'text/plain;charset=utf-8' });
                         }
                         res.write(data);
@@ -158,7 +159,7 @@ function request(req, res) {
         var finish = qs.parse(allData)
         let username = finish.username
         let request = finish.request
-        console.log(request);
+        // console.log(request);
         switch (request) {
             case "enemy":
                 Request.enemy(req, res, username)
@@ -172,7 +173,7 @@ function request(req, res) {
 
 class Request {
     static enemy(req, res, username) {
-        console.log(`${username}requested enemy`);
+        // console.log(`${username} requested enemy`);
         if (serverDatabase.clients["1"] == username && serverDatabase.clients["2"] != undefined) {
             res.end(JSON.stringify({ msg: "DATA", enemy: serverDatabase.clients["2"] }))
         }

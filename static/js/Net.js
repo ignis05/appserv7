@@ -18,7 +18,7 @@ class Net {
             });
         })
     }
-    
+
     static logout(username) {
         console.log(`logging out ${username}`);
         return new Promise((resolve, reject) => {
@@ -59,6 +59,19 @@ class Net {
                     reject(new Error(xhr))
                 },
             });
+        })
+    }
+
+    static wait(username, request) {
+        return new Promise(resolve => {
+            var interval = setInterval(async () => {
+                let resp = await Net.request(username, request)
+                console.log(resp);
+                if (resp.msg == "DATA") {
+                    clearInterval(interval)
+                    resolve(resp)
+                }
+            }, 500)
         })
     }
 }

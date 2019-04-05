@@ -15,23 +15,13 @@ $(document).ready(async () => {
     console.log("logged in");
     if (session.color == 2) game.flipCamera() // if playing with black pieces rotate board
     ui.displayWait()
-    let enemy = await wait("enemy")
+    let data = await Net.wait(session.username, "enemy")
     console.log("resolved wait");
-    console.log(enemy);
+    session.enemy = data.enemy
+    let status_temp = $(ui.status).html()
+    $(ui.status).html(status_temp + `, przeciwko graczowi <span style='color:violet'>${session.enemy}</span>`)
+    ui.hideWait()
 })
-
-function wait(request) {
-    return new Promise(resolve => {
-        var interval = setInterval(async () => {
-            let resp = await Net.request(session.username, request)
-            console.log(resp);
-            if (resp.msg == "DATA") {
-                clearInterval(interval)
-                resolve(resp)
-            }
-        }, 500)
-    })
-}
 
 window.addEventListener('beforeunload', async () => { // triggers on tab close, page refreash, etc.
     if (session.username) { // if logged in send logout request
