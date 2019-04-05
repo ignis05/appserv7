@@ -1,7 +1,7 @@
 class Game {
     constructor(root) {
         this.boardTab = this.generateBoardTab() // generates 2d array
-        this.piecesTab = this.generatepiecesTab() // generates 2d array
+        this.piecesTab = this.generatePiecesTab() // generates 2d array
 
         this.pieces = [] // tab for pieces Class elements
         this.activePiece;
@@ -30,6 +30,8 @@ class Game {
     }
     addRaycasterListeners() {
         $("#root").on("click", () => {
+            if (this.activePiece && this.activeField)
+                this.raycasterMove()
             this.raycasterPiece()
         })
         $("#root").on("mousemove", () => {
@@ -47,7 +49,7 @@ class Game {
         }
         return tab
     }
-    generatepiecesTab() { // generates 2d array reflecting piecesTab on board
+    generatePiecesTab() { // generates 2d array reflecting piecesTab on board
         var tab = []
         for (var i = 0; i < 8; i++) {
             tab[i] = []
@@ -85,10 +87,37 @@ class Game {
             this.renderer.setSize($(window).width(), $(window).height())
         })
     }
+    deactivateField() {
+        if (this.activeField) {
+            let _field = new Field((this.boardTab[this.activeField.posX][this.activeField.posY] == 1 ? 0xa59a93 : 0x8c4010), this.activeField.posX, this.activeField.posY)
+            this.board[this.board.indexOf(this.activeField)] = _field
+            this.scene.remove(this.activeField)
+            this.scene.add(_field)
+            this.activeField = undefined
+        }
+    }
+    deactivatePiece() {
+        let _piece = new Piece((session.color ? 0xff0000 : 0x000000), session.username, this.activePiece.posX, this.activePiece.posY)
+        this.pieces[this.pieces.indexOf(this.activePiece)] = _piece
+        this.scene.remove(this.activePiece)
+        this.scene.add(_piece)
+        this.activePiece = undefined
+        this.deactivateField()
+    }
     setRaycaster() {
         // raycaster
         this.raycaster = new THREE.Raycaster(); // obiekt symulujący "rzucanie" promieni
         this.mouseVector = new THREE.Vector2() // ten wektor czyli pozycja w przestrzeni 2D na ekranie(x,y) 
+    }
+    raycasterMove() {
+        console.log("RAYCASTER MOVE");
+        let piece = this.activePiece
+        let field = this.activeField
+        this.piecesTab[field.posX][field.posY] = this.piecesTab[piece.posX][piece.posY]
+        this.piecesTab[piece.posX][piece.posY] = 0
+        this.activePiece = undefined
+        this.renderPieces()
+        this.deactivateField()
     }
     raycasterField() {
         this.mouseVector.x = (event.clientX / $(window).width()) * 2 - 1
@@ -100,17 +129,11 @@ class Game {
         // this.activeField
         if (intersects.length > 0) {
             if (this.activeField && this.activeField != intersects[0].object) { // change activeField to normal color
-
-                console.log(this.boardTab[this.activeField.posX][this.activeField.posY] == 1);
-                let _field = new Field((this.boardTab[this.activeField.posX][this.activeField.posY] == 1 ? 0xa59a93 : 0x8c4010), this.activeField.posX, this.activeField.posY)
-                this.board[this.board.indexOf(this.activeField)] = _field
-                this.scene.remove(this.activeField)
-                this.scene.add(_field)
-                this.activeField = undefined
+                this.deactivateField()
             }
             if (intersects[0].object.color == 0x8c4010) {
                 let field = intersects[0].object
-                console.log(field);
+                // console.log(field);
                 if (this.checkMove(field)) {
 
                     this.scene.remove(field) // delete from scene
@@ -131,17 +154,18 @@ class Game {
 
         var intersects = this.raycaster.intersectObjects(this.pieces); // only pieces
 
+        if (this.activePiece && intersects.length > 0 && intersects[0].object == this.activePiece) {
+            console.log("here");
+            return
+        }
+
         if (this.activePiece) { // change activePiece to normal color
-            let _piece = new Piece((session.color ? 0xff0000 : 0x000000), session.username, this.activePiece.posX, this.activePiece.posY)
-            this.pieces[this.pieces.indexOf(this.activePiece)] = _piece
-            this.scene.remove(this.activePiece)
-            this.scene.add(_piece)
-            this.activePiece = undefined
+            this.deactivatePiece()
         }
 
         if (intersects.length > 0 && intersects[0].object.owner == session.username) {
             let piece = intersects[0].object
-            console.log(piece);
+            console.log("activating");
 
             this.scene.remove(piece) // delete from scene
 
@@ -155,7 +179,7 @@ class Game {
         console.log(`field: x:${field.posX}, y:${field.posY}`);
         // check alredy taken by piece
         if (this.pieces.find(piece => piece.posX == field.posX && piece.posY == field.posY && piece.owner == session.username)) return false
-        
+
         console.log(`piece: x:${this.activePiece.posX}, y:${this.activePiece.posY}`);
         let dist = Math.sqrt((field.posX - this.activePiece.posX) * (field.posX - this.activePiece.posX) + (field.posY - this.activePiece.posY) * (field.posY - this.activePiece.posY))
         console.log(`dist: ${dist}`);
