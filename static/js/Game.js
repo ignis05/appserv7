@@ -1,9 +1,13 @@
 class Game {
     constructor(root) {
-        this.board = this.generateBoard() // generates 2d array
+        this.boardTab = this.generateBoardTab() // generates 2d array
         this.piecesTab = this.generatepiecesTab() // generates 2d array
 
         this.pieces = [] // tab for pieces Class elements
+        this.activePiece;
+
+        this.board = []
+        this.activeField
 
         this.root = root // div to render tree.js inside
 
@@ -12,21 +16,28 @@ class Game {
         this.fieldMaterial1 = new THREE.MeshBasicMaterial({
             side: THREE.DoubleSide,
             map: new THREE.TextureLoader().load("/static/mats/wood.png"),
-            color: 0xffff00,
+            color: 0xa59a93,
         })
         this.fieldMaterial2 = new THREE.MeshBasicMaterial({
             side: THREE.DoubleSide,
             map: new THREE.TextureLoader().load("/static/mats/wood.png"),
-            color: 0x00ffff,
+            color: 0x8c4010,
         })
         // #endregion materials and geometries
 
         this.startGame(this.root) // starts 3d display in root div
-        $(document).on("click", () => {
-            this.useRayCaster()
+        this.addRaycasterListeners()
+    }
+    addRaycasterListeners() {
+        $("#root").on("click", () => {
+            this.raycasterPiece()
+        })
+        $("#root").on("mousemove", () => {
+            if (this.activePiece)
+                this.raycasterField()
         })
     }
-    generateBoard() { // generates 2d array reflecting board
+    generateBoardTab() { // generates 2d array reflecting board
         var tab = []
         for (var i = 0; i < 8; i++) {
             tab[i] = []
@@ -79,23 +90,78 @@ class Game {
         this.raycaster = new THREE.Raycaster(); // obiekt symulujący "rzucanie" promieni
         this.mouseVector = new THREE.Vector2() // ten wektor czyli pozycja w przestrzeni 2D na ekranie(x,y) 
     }
-    useRayCaster() {
+    raycasterField() {
         this.mouseVector.x = (event.clientX / $(window).width()) * 2 - 1
         this.mouseVector.y = -(event.clientY / $(window).height()) * 2 + 1
         this.raycaster.setFromCamera(this.mouseVector, this.camera);
 
-        var intersects = this.raycaster.intersectObjects(this.pieces);
+        var intersects = this.raycaster.intersectObjects(this.board); // only fields
 
+        // this.activeField
         if (intersects.length > 0) {
-            let piece = intersects[0].object
-            console.log(piece);
-            if (piece.owner == session.username) {
-                console.log("clicked piece");
+            if (this.activeField && this.activeField != intersects[0].object) { // change activeField to normal color
+
+                console.log(this.boardTab[this.activeField.posX][this.activeField.posY] == 1);
+                let _field = new Field((this.boardTab[this.activeField.posX][this.activeField.posY] == 1 ? 0xa59a93 : 0x8c4010), this.activeField.posX, this.activeField.posY)
+                this.board[this.board.indexOf(this.activeField)] = _field
+                this.scene.remove(this.activeField)
+                this.scene.add(_field)
+                this.activeField = undefined
             }
-            else {
-                console.log("clicked enemy");
+            if (intersects[0].object.color == 0x8c4010) {
+                let field = intersects[0].object
+                console.log(field);
+                if (this.checkMove(field)) {
+
+                    this.scene.remove(field) // delete from scene
+
+                    let _field = new Field(0xffff00, field.posX, field.posY) // new yellow field
+                    _field.position.copy(field.position) // set position
+                    this.scene.add(_field)
+                    this.board[this.board.indexOf(field)] = _field // replace in array
+                    this.activeField = _field
+                }
             }
         }
+    }
+    raycasterPiece() {
+        this.mouseVector.x = (event.clientX / $(window).width()) * 2 - 1
+        this.mouseVector.y = -(event.clientY / $(window).height()) * 2 + 1
+        this.raycaster.setFromCamera(this.mouseVector, this.camera);
+
+        var intersects = this.raycaster.intersectObjects(this.pieces); // only pieces
+
+        if (this.activePiece) { // change activePiece to normal color
+            let _piece = new Piece((session.color ? 0xff0000 : 0x000000), session.username, this.activePiece.posX, this.activePiece.posY)
+            this.pieces[this.pieces.indexOf(this.activePiece)] = _piece
+            this.scene.remove(this.activePiece)
+            this.scene.add(_piece)
+            this.activePiece = undefined
+        }
+
+        if (intersects.length > 0 && intersects[0].object.owner == session.username) {
+            let piece = intersects[0].object
+            console.log(piece);
+
+            this.scene.remove(piece) // delete from scene
+
+            let _piece = new Piece(0xffff00, session.username, piece.posX, piece.posY) // new yellow piece
+            this.scene.add(_piece)
+            this.pieces[this.pieces.indexOf(piece)] = _piece // replace in array
+            this.activePiece = _piece
+        }
+    }
+    checkMove(field) {
+        console.log(`field: x:${field.posX}, y:${field.posY}`);
+        // check alredy taken by piece
+        if (this.pieces.find(piece => piece.posX == field.posX && piece.posY == field.posY && piece.owner == session.username)) return false
+        
+        console.log(`piece: x:${this.activePiece.posX}, y:${this.activePiece.posY}`);
+        let dist = Math.sqrt((field.posX - this.activePiece.posX) * (field.posX - this.activePiece.posX) + (field.posY - this.activePiece.posY) * (field.posY - this.activePiece.posY))
+        console.log(`dist: ${dist}`);
+        if (dist > 0 && dist < 2)
+            return true
+        return false
     }
     setRenderer(root) { // creates renderer
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -108,23 +174,22 @@ class Game {
         var axes = new THREE.AxesHelper(1000)
         this.scene.add(axes)
     }
-    // render = () => { // function rendering changes (syntax works only in chrome)
-    //     requestAnimationFrame(this.render);
-    //     this.renderer.render(this.scene, this.camera);
-    // }
-    addBoard() { // generates 3d gameboard display using this.board array
-        for (var i in this.board) {
-            for (var j in this.board[i]) {
+    renderBoard() { // generates 3d gameboard display using this.boardTab array
+        this.board.forEach(field => {
+            this.scene.remove(field)
+        });
+        this.board = []
+        for (var i in this.boardTab) {
+            for (var j in this.boardTab[i]) {
                 var field
-                if (this.board[i][j] == 1) {
-                    field = new THREE.Mesh(this.fieldGeometry, this.fieldMaterial1)
+                if (this.boardTab[i][j] == 1) {
+                    field = new Field(0xa59a93, i, j)
                 }
                 else {
-                    field = new THREE.Mesh(this.fieldGeometry, this.fieldMaterial2)
+                    field = new Field(0x8c4010, i, j)
                 }
-                field.position.x = 50 * (i - 4) + 25
-                field.position.z = 50 * (j - 4) + 25
                 this.scene.add(field)
+                this.board.push(field)
             }
         }
     }
@@ -139,17 +204,14 @@ class Game {
                     var piece
                     if (this.piecesTab[i][j] == 1) {
                         let owner = (session.color == 1 ? session.username : session.enemy)
-                        piece = new Piece(0xff0000, owner)
+                        piece = new Piece(0xff0000, owner, i, j)
                         this.pieces.push(piece)
                     }
                     if (this.piecesTab[i][j] == 2) {
                         let owner = (session.color == 2 ? session.username : session.enemy)
-                        piece = new Piece(0x000000, owner)
+                        piece = new Piece(0x000000, owner, i, j)
                         this.pieces.push(piece)
                     }
-                    piece.position.x = 50 * (i - 4) + 25
-                    piece.position.z = 50 * (j - 4) + 25
-                    piece.position.y = 10
                     this.scene.add(piece)
                 }
             }
@@ -170,9 +232,9 @@ class Game {
 
         this.setRenderer(root)
 
-        this.addAxes()
+        // this.addAxes()
 
-        this.addBoard()
+        this.renderBoard()
 
         // this.renderPieces()
 
