@@ -135,6 +135,16 @@ class Game {
     async raycasterMove() {
         let piece = this.activePiece
         let field = this.activeField
+
+        if (Math.abs(parseInt(piece.posX) - parseInt(field.posX)) > 1) { // actually need to check only one dimension
+            console.log('zbijanie');
+            console.log(piece.posX, piece.posY);
+            console.log(field.posX, field.posY);
+            let toRemoveX = (parseInt(piece.posX) + parseInt(field.posX)) / 2
+            let toRemoveY = (parseInt(piece.posY) + parseInt(field.posY)) / 2
+            console.log(toRemoveX, toRemoveY);
+        }
+
         this.piecesTab[field.posX][field.posY] = this.piecesTab[piece.posX][piece.posY]
         this.piecesTab[piece.posX][piece.posY] = 0
         this.activePiece = undefined
