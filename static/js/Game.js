@@ -132,6 +132,7 @@ class Game {
         this.mouseVector = new THREE.Vector2() // ten wektor czyli pozycja w przestrzeni 2D na ekranie(x,y) 
     }
     async raycasterMove() {
+        console.log('moving');
         let piece = this.activePiece
         let field = this.activeField
 
@@ -171,27 +172,31 @@ class Game {
         this.mouseVector.y = -(event.clientY / $(window).height()) * 2 + 1
         this.raycaster.setFromCamera(this.mouseVector, this.camera);
 
-        var intersects = this.raycaster.intersectObjects(this.validMoveFiels); // only valid fields
+        var intersects = this.raycaster.intersectObjects(this.board); // only valid fields
 
         // this.activeField
         if (intersects.length > 0) {
 
             let field = intersects[0].object
+            if (this.validMoveFiels.find(f => f == field)) {
+                if (field.color != 16776960) { // if not already highlighted
+                    console.log('here');
+                    this.scene.remove(field) // delete from scene
 
-            if (field.color != 65280) { // if not already highlighted
-                this.scene.remove(field) // delete from scene
-
-                let _field = new Field(0xffff00, field.posX, field.posY) // new yellow field
-                _field.position.copy(field.position) // set position
-                this.scene.add(_field)
-                this.board[this.board.indexOf(field)] = _field // replace in array
-                this.activeField = _field
+                    let _field = new Field(0xffff00, field.posX, field.posY) // new yellow field
+                    _field.position.copy(field.position) // set position
+                    this.scene.add(_field)
+                    this.board[this.board.indexOf(field)] = _field // replace in array
+                    this.validMoveFiels[this.validMoveFiels.indexOf(field)] = _field
+                    this.activeField = _field
+                }
             }
+            else {
+                console.log('there');
+                this.deactivateField()
+            }
+        }
 
-        }
-        else {
-            this.deactivateField()
-        }
     }
     raycasterPiece() {
         this.mouseVector.x = (event.clientX / $(window).width()) * 2 - 1
