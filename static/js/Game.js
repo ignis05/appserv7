@@ -249,6 +249,21 @@ class Game {
                 this.validMoveFiels.push(piece)
             }
             else console.log('field 2 bad');
+
+            // field 1 long
+            if (this.piecesTab[x - 1] && this.piecesTab[x - 1][y - 1] === 2 && this.piecesTab[x - 2] && this.piecesTab[x - 2][y - 2] == 0) {
+                console.log('field 1 long ok');
+                let piece = this.board.find(piece => piece.posX == x - 2 && piece.posY == y - 2)
+                this.validMoveFiels.push(piece)
+            }
+            else console.log('field 1 long bad');
+            // field 2 long
+            if (this.piecesTab[x - 1] && this.piecesTab[x - 1][y + 1] === 2 && this.piecesTab[x - 2] && this.piecesTab[x - 2][y + 2] == 0) {
+                console.log('field 2 long ok');
+                let piece = this.board.find(piece => piece.posX == x - 2 && piece.posY == y + 2)
+                this.validMoveFiels.push(piece)
+            }
+            else console.log('field 2 long bad');
         }
         if (session.color == 2) {
             // field 3
@@ -265,6 +280,20 @@ class Game {
                 this.validMoveFiels.push(piece)
             }
             else console.log('field 4 bad');
+            // field 3 long
+            if (this.piecesTab[x + 1] && this.piecesTab[x + 1][y - 1] === 1 && this.piecesTab[x + 2] && this.piecesTab[x + 2][y - 2] == 0) {
+                console.log('field 3 long ok');
+                let piece = this.board.find(piece => piece.posX == x + 2 && piece.posY == y - 2)
+                this.validMoveFiels.push(piece)
+            }
+            else console.log('field 3 long bad');
+            // field 4 long
+            if (this.piecesTab[x + 1] && this.piecesTab[x + 1][y + 1] === 1 && this.piecesTab[x + 2] && this.piecesTab[x + 2][y + 2] == 0) {
+                console.log('field 4 long ok');
+                let piece = this.board.find(piece => piece.posX == x + 2 && piece.posY == y + 2)
+                this.validMoveFiels.push(piece)
+            }
+            else console.log('field 4 long bad');
         }
 
         console.log(this.validMoveFiels);
