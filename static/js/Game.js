@@ -132,17 +132,24 @@ class Game {
         this.mouseVector = new THREE.Vector2() // ten wektor czyli pozycja w przestrzeni 2D na ekranie(x,y) 
     }
     async raycasterMove() {
-        console.log('moving');
         let piece = this.activePiece
         let field = this.activeField
 
         if (Math.abs(parseInt(piece.posX) - parseInt(field.posX)) > 1) { // actually need to check only one dimension
             console.log('zbijanie');
-            console.log(piece.posX, piece.posY);
-            console.log(field.posX, field.posY);
+            // console.log(piece.posX, piece.posY);
+            // console.log(field.posX, field.posY);
             let toRemoveX = (parseInt(piece.posX) + parseInt(field.posX)) / 2
             let toRemoveY = (parseInt(piece.posY) + parseInt(field.posY)) / 2
             console.log(toRemoveX, toRemoveY);
+            // remove piece from arrays and scene
+            this.piecesTab[toRemoveX][toRemoveY] = 0
+
+            let rmPiece = this.pieces.find(p => p.posX == toRemoveX && p.posY == toRemoveY)
+            this.scene.remove(rmPiece)
+
+            let rmPieceIndex = this.pieces.findIndex(p => p.posX == toRemoveX && p.posY == toRemoveY)
+            this.pieces.splice(rmPieceIndex, 1)
         }
 
         this.piecesTab[field.posX][field.posY] = this.piecesTab[piece.posX][piece.posY]
