@@ -10,6 +10,8 @@ class Game {
         this.board = []
         this.activeField
 
+        this.validMoveFiels = []
+
         this.root = root // div to render tree.js inside
 
         this.startGame(this.root) // starts 3d display in root div
@@ -44,8 +46,10 @@ class Game {
         })
         $("#root").on("mousemove", () => {
             if (this.myTurn) {
-                if (this.activePiece)
+                if (this.activePiece) {
+                    this.deactivateField()
                     this.raycasterField()
+                }
             }
         })
     }
@@ -99,8 +103,9 @@ class Game {
     }
     deactivateField() {
         if (this.activeField) {
-            let _field = new Field((this.boardTab[this.activeField.posX][this.activeField.posY] == 1 ? 0xa59a93 : 0x8c4010), this.activeField.posX, this.activeField.posY)
+            let _field = new Field(0x00ff00, this.activeField.posX, this.activeField.posY)
             this.board[this.board.indexOf(this.activeField)] = _field
+            this.validMoveFiels[this.validMoveFiels.indexOf(this.activeField)] = _field
             this.scene.remove(this.activeField)
             this.scene.add(_field)
             this.activeField = undefined
@@ -113,6 +118,14 @@ class Game {
         this.scene.add(_piece)
         this.activePiece = undefined
         this.deactivateField()
+        for (let field of this.validMoveFiels) { // restore gren fields colors
+            this.scene.remove(field) // delete from scene
+            let _field = new Field((this.boardTab[parseInt(field.posX)][parseInt(field.posY)] == 1 ? 0xa59a93 : 0x8c4010), field.posX, field.posY) // new green field
+            _field.position.copy(field.position) // set position
+            this.scene.add(_field)
+            this.board[this.board.indexOf(field)] = _field // replace in array
+        }
+        this.validMoveFiels = []
     }
     setRaycaster() {
         // raycaster
@@ -127,6 +140,14 @@ class Game {
         this.activePiece = undefined
         this.renderPieces()
         this.deactivateField()
+        for (let field of this.validMoveFiels) { // restore gren fields colors
+            this.scene.remove(field) // delete from scene
+            let _field = new Field((this.boardTab[parseInt(field.posX)][parseInt(field.posY)] == 1 ? 0xa59a93 : 0x8c4010), field.posX, field.posY) // new green field
+            _field.position.copy(field.position) // set position
+            this.scene.add(_field)
+            this.board[this.board.indexOf(field)] = _field // replace in array
+        }
+        this.validMoveFiels = []
         this.myTurn = false
         console.log("TCL: Game -> raycasterMove -> this.myTurn", this.myTurn)
         await Net.sendBoard(session.color, this.piecesTab)
@@ -141,27 +162,25 @@ class Game {
         this.mouseVector.y = -(event.clientY / $(window).height()) * 2 + 1
         this.raycaster.setFromCamera(this.mouseVector, this.camera);
 
-        var intersects = this.raycaster.intersectObjects(this.board); // only fields
+        var intersects = this.raycaster.intersectObjects(this.validMoveFiels); // only valid fields
 
         // this.activeField
         if (intersects.length > 0) {
-            if (this.activeField && this.activeField != intersects[0].object) { // change activeField to normal color
-                this.deactivateField()
-            }
-            if (intersects[0].object.color == 0x8c4010) {
-                let field = intersects[0].object
-                // console.log(field);
-                if (this.checkMove(field)) {
+            // if (this.activeField && this.activeField != intersects[0].object) { // change activeField to normal color
+            //     this.deactivateField()
+            // }
 
-                    this.scene.remove(field) // delete from scene
+            let field = intersects[0].object
+            // console.log(field);
 
-                    let _field = new Field(0xffff00, field.posX, field.posY) // new yellow field
-                    _field.position.copy(field.position) // set position
-                    this.scene.add(_field)
-                    this.board[this.board.indexOf(field)] = _field // replace in array
-                    this.activeField = _field
-                }
-            }
+            this.scene.remove(field) // delete from scene
+
+            let _field = new Field(0xffff00, field.posX, field.posY) // new yellow field
+            _field.position.copy(field.position) // set position
+            this.scene.add(_field)
+            this.board[this.board.indexOf(field)] = _field // replace in array
+            this.activeField = _field
+
         }
     }
     raycasterPiece() {
@@ -172,7 +191,8 @@ class Game {
         var intersects = this.raycaster.intersectObjects(this.pieces); // only pieces
 
         if (this.activePiece && intersects.length > 0 && intersects[0].object == this.activePiece) {
-            console.log("here");
+            console.log("clicked active piece");
+            this.deactivatePiece()
             return
         }
 
@@ -190,6 +210,7 @@ class Game {
             this.scene.add(_piece)
             this.pieces[this.pieces.indexOf(piece)] = _piece // replace in array
             this.activePiece = _piece
+            this.highlightFields()
         }
     }
     checkMove(field) {
@@ -203,6 +224,54 @@ class Game {
         if (dist > 0 && dist < 2)
             return true
         return false
+    }
+    highlightFields() {
+        if (!this.activePiece) return
+        console.log(this.activePiece);
+        // console.log(this.piecesTab);
+        let x = parseInt(this.activePiece.posX)
+        let y = parseInt(this.activePiece.posY)
+        // console.log(x, y);
+        this.validMoveFiels = []
+        // field 1 
+        if (this.piecesTab[x - 1] && this.piecesTab[x - 1][y - 1] === 0) {
+            console.log('field 1 ok');
+            let piece = this.board.find(piece => piece.posX == x - 1 && piece.posY == y - 1)
+            this.validMoveFiels.push(piece)
+        }
+        else console.log('field 1 bad');
+        // field 2 
+        if (this.piecesTab[x - 1] && this.piecesTab[x - 1][y + 1] === 0) {
+            console.log('field 2 ok');
+            let piece = this.board.find(piece => piece.posX == x - 1 && piece.posY == y + 1)
+            this.validMoveFiels.push(piece)
+        }
+        else console.log('field 2 bad');
+        // field 3
+        if (this.piecesTab[x + 1] && this.piecesTab[x + 1][y - 1] === 0) {
+            console.log('field 3 ok');
+            let piece = this.board.find(piece => piece.posX == x + 1 && piece.posY == y - 1)
+            this.validMoveFiels.push(piece)
+        }
+        else console.log('field 3 bad');
+        // field 4 
+        if (this.piecesTab[x + 1] && this.piecesTab[x + 1][y + 1] === 0) {
+            console.log('field 4 ok');
+            let piece = this.board.find(piece => piece.posX == x + 1 && piece.posY == y + 1)
+            this.validMoveFiels.push(piece)
+        }
+        else console.log('field 4 bad');
+
+        console.log(this.validMoveFiels);
+
+        for (let field of this.validMoveFiels) {
+            this.scene.remove(field) // delete from scene
+            let _field = new Field(0x00ff00, field.posX, field.posY) // new green field
+            _field.position.copy(field.position) // set position
+            this.scene.add(_field)
+            this.board[this.board.indexOf(field)] = _field // replace in array
+            this.validMoveFiels[this.validMoveFiels.indexOf(field)] = _field // replace in array
+        }
     }
     setRenderer(root) { // creates renderer
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -279,7 +348,7 @@ class Game {
 
         // this.renderPieces()
 
-        this.enableOrbitControl()
+        // this.enableOrbitControl()
 
         var render = () => { // function rendering changes 
             requestAnimationFrame(render);
