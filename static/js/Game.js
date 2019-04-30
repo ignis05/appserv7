@@ -233,34 +233,39 @@ class Game {
         let y = parseInt(this.activePiece.posY)
         // console.log(x, y);
         this.validMoveFiels = []
-        // field 1 
-        if (this.piecesTab[x - 1] && this.piecesTab[x - 1][y - 1] === 0) {
-            console.log('field 1 ok');
-            let piece = this.board.find(piece => piece.posX == x - 1 && piece.posY == y - 1)
-            this.validMoveFiels.push(piece)
+
+        if (session.color == 1) {
+            // field 1 
+            if (this.piecesTab[x - 1] && this.piecesTab[x - 1][y - 1] === 0) {
+                console.log('field 1 ok');
+                let piece = this.board.find(piece => piece.posX == x - 1 && piece.posY == y - 1)
+                this.validMoveFiels.push(piece)
+            }
+            else console.log('field 1 bad');
+            // field 2 
+            if (this.piecesTab[x - 1] && this.piecesTab[x - 1][y + 1] === 0) {
+                console.log('field 2 ok');
+                let piece = this.board.find(piece => piece.posX == x - 1 && piece.posY == y + 1)
+                this.validMoveFiels.push(piece)
+            }
+            else console.log('field 2 bad');
         }
-        else console.log('field 1 bad');
-        // field 2 
-        if (this.piecesTab[x - 1] && this.piecesTab[x - 1][y + 1] === 0) {
-            console.log('field 2 ok');
-            let piece = this.board.find(piece => piece.posX == x - 1 && piece.posY == y + 1)
-            this.validMoveFiels.push(piece)
+        if (session.color == 2) {
+            // field 3
+            if (this.piecesTab[x + 1] && this.piecesTab[x + 1][y - 1] === 0) {
+                console.log('field 3 ok');
+                let piece = this.board.find(piece => piece.posX == x + 1 && piece.posY == y - 1)
+                this.validMoveFiels.push(piece)
+            }
+            else console.log('field 3 bad');
+            // field 4 
+            if (this.piecesTab[x + 1] && this.piecesTab[x + 1][y + 1] === 0) {
+                console.log('field 4 ok');
+                let piece = this.board.find(piece => piece.posX == x + 1 && piece.posY == y + 1)
+                this.validMoveFiels.push(piece)
+            }
+            else console.log('field 4 bad');
         }
-        else console.log('field 2 bad');
-        // field 3
-        if (this.piecesTab[x + 1] && this.piecesTab[x + 1][y - 1] === 0) {
-            console.log('field 3 ok');
-            let piece = this.board.find(piece => piece.posX == x + 1 && piece.posY == y - 1)
-            this.validMoveFiels.push(piece)
-        }
-        else console.log('field 3 bad');
-        // field 4 
-        if (this.piecesTab[x + 1] && this.piecesTab[x + 1][y + 1] === 0) {
-            console.log('field 4 ok');
-            let piece = this.board.find(piece => piece.posX == x + 1 && piece.posY == y + 1)
-            this.validMoveFiels.push(piece)
-        }
-        else console.log('field 4 bad');
 
         console.log(this.validMoveFiels);
 
