@@ -47,7 +47,6 @@ class Game {
         $("#root").on("mousemove", () => {
             if (this.myTurn) {
                 if (this.activePiece) {
-                    this.deactivateField()
                     this.raycasterField()
                 }
             }
@@ -176,21 +175,22 @@ class Game {
 
         // this.activeField
         if (intersects.length > 0) {
-            // if (this.activeField && this.activeField != intersects[0].object) { // change activeField to normal color
-            //     this.deactivateField()
-            // }
 
             let field = intersects[0].object
-            // console.log(field);
 
-            this.scene.remove(field) // delete from scene
+            if (field.color != 65280) { // if not already highlighted
+                this.scene.remove(field) // delete from scene
 
-            let _field = new Field(0xffff00, field.posX, field.posY) // new yellow field
-            _field.position.copy(field.position) // set position
-            this.scene.add(_field)
-            this.board[this.board.indexOf(field)] = _field // replace in array
-            this.activeField = _field
+                let _field = new Field(0xffff00, field.posX, field.posY) // new yellow field
+                _field.position.copy(field.position) // set position
+                this.scene.add(_field)
+                this.board[this.board.indexOf(field)] = _field // replace in array
+                this.activeField = _field
+            }
 
+        }
+        else {
+            this.deactivateField()
         }
     }
     raycasterPiece() {
@@ -306,7 +306,7 @@ class Game {
             else console.log('field 4 long bad');
         }
 
-        console.log(this.validMoveFiels);
+        // console.log(this.validMoveFiels);
 
         for (let field of this.validMoveFiels) {
             this.scene.remove(field) // delete from scene
