@@ -21,15 +21,19 @@ class Game {
         await Net.sendBoard(session.color, this.piecesTab)
         this.myTurn = true
         console.log("TCL: Game -> startFirst -> this.myTurn", this.myTurn)
+        this.renderer.setClearColor(0x00aa00);
     }
     async startSecond(restart) { // restart is true if restarting session
         this.myTurn = false
         console.log("TCL: Game -> startSecond -> this.myTurn", this.myTurn)
         await Net.sendBoard(session.color, this.piecesTab)
         let response = await Net.wait(session.username, "getBoard")
+        this.renderer.setClearColor(0x00aa00);
         if (restart) {
             await Net.sendBoard(session.color, this.piecesTab)
+            this.renderer.setClearColor(0xffffff);
             response = await Net.wait(session.username, "getBoard")
+            this.renderer.setClearColor(0x00aa00);
         }
         this.piecesTab = response.board
         this.renderPieces()
@@ -169,12 +173,14 @@ class Game {
         console.log("TCL: Game -> raycasterMove -> this.myTurn", this.myTurn)
         await Net.sendBoard(session.color, this.piecesTab)
         this.checkWinCondition()
+        this.renderer.setClearColor(0xffffff);
         let response = await Net.wait(session.username, "getBoard")
         this.piecesTab = response.board
         this.renderPieces()
         this.checkWinCondition()
         this.myTurn = true
         console.log("TCL: Game -> raycasterMove -> this.myTurn", this.myTurn)
+        this.renderer.setClearColor(0x00aa00);
     }
     checkWinCondition() {
         let tab = this.piecesTab
