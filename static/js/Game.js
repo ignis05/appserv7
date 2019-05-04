@@ -168,11 +168,44 @@ class Game {
         this.myTurn = false
         console.log("TCL: Game -> raycasterMove -> this.myTurn", this.myTurn)
         await Net.sendBoard(session.color, this.piecesTab)
+        this.checkWinCondition()
         let response = await Net.wait(session.username, "getBoard")
         this.piecesTab = response.board
         this.renderPieces()
+        this.checkWinCondition()
         this.myTurn = true
         console.log("TCL: Game -> raycasterMove -> this.myTurn", this.myTurn)
+    }
+    checkWinCondition() {
+        let tab = this.piecesTab
+        let p1 = false
+        let p2 = false
+        for (let i of tab) {
+            for (let j of i) {
+                if (j == 1) p1 = true
+                if (j == 2) p2 = true
+            }
+        }
+        if (!p1) {
+            if (session.color == 1) {
+                window.alert('You lost')
+                window.location.reload()
+            }
+            else {
+                window.alert('You won')
+                window.location.reload()
+            }
+        }
+        if (!p2) {
+            if (session.color == 2) {
+                window.alert('You lost')
+                window.location.reload()
+            }
+            else {
+                window.alert('You won')
+                window.location.reload()
+            }
+        }
     }
     raycasterField() {
         this.mouseVector.x = (event.clientX / $(window).width()) * 2 - 1
